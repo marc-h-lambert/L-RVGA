@@ -2,7 +2,7 @@
 ## Python files
 A library to assess Bayesian sequential algorithms based on the Kalman filtering framework.
 
-The arborescence is the following:
+The content of the files are the following:
 
 - KDataGenerator: generate synthetic dataset for linear and logistic regression
 - KFactorAnalysis: the class to compute factor analysis with several methods: Batch EM, Online EM, Recursive EM or SVD 

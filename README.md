@@ -22,5 +22,6 @@ The source of the library "Kalman Machine" which implement the assesed algorithm
 [B]: https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/
 
 \[1\]: ["The limited recursive variational Gaussian approximation (L-RVGA), Marc Lambert, Silvere Bonnabel and Francis Bach".][A] 
+
 \[2\]: ["LIBSVM Data: Classification, Regression, and Multi-label".][B] 
 

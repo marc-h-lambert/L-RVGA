@@ -2,7 +2,7 @@
 
 ## Object
 
-This is the companion code for the article "The limited recursive variational Gaussian approximation (L-RVGA)" \[[1][A]\]. Please cite this reference if you use this code. This code is the last update and may be not compatible with the \[[code][1]\] published in the previous article \[[2][B]\].  
+This is the companion code for the article "The limited recursive variational Gaussian approximation (L-RVGA)" \[[1][A]\]. Please cite this reference if you use this code. This code is the last update and may be not compatible with the [code][1] published in the previous article \[[2][B]\].  
 
 ## Installation
 The code is available in python using the standard library. We depends on the "scipy" library for optimization, we use the scipy powell method to compute the implicit scheme and the scipy l-bfgs method to compute the maximum posterior for Laplace approximation. If not available on your distribution, you may install scipy following https://www.scipy.org/install.html.

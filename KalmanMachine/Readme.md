@@ -12,6 +12,6 @@ The arborescence is the following:
   including several methods: EKF, QKF, RVGA implicit, RVGA explicit, Mirror prox
 - Kalman4LogisticRegLS: the online Bayesian algorithms for large scale (LS) logistic regression with factor analysis,
   including several methods: large scale version of EKF, RVGA implicit, RVGA explicit, Mirror prox and Mirror prox with Sampling
-- KEvalPosterior: a class to compute the KL with respect to the true posterior in linear and logistic regression (usefull for plotting results)
+- KEvalPosterior: a class to compute the KL with respect to the true posterior in linear and logistic regression
 - KUtils: usefull static functions such as logistic losses, importance sampling, fast log det, etc. 
 - KVizualizationsHD: functions to draw the KL results for different methods in the same plot.

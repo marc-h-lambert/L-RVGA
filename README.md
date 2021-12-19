@@ -2,7 +2,7 @@
 
 ## Object
 
-This is the companion code for the article "The limited recursive variational Gaussian approximation (L-RVGA)" \[[1][A]\]. Please cite this reference if you use this code.  
+This is the companion code for the article "The limited recursive variational Gaussian approximation (L-RVGA)" \[[1][A]\]. Please cite this reference if you use this code. This code is the last update and may be not compatible with the code published for the previous article in \[[3][X]\].  
 
 ## Installation
 The code is available in python using the standard library. We depends on the "scipy" library for optimization, we use the scipy powell method to compute the implicit scheme and the scipy l-bfgs method to compute the maximum posterior for Laplace approximation. If not available on your distribution, you may install scipy following https://www.scipy.org/install.html.
@@ -18,6 +18,7 @@ The source of the library "Kalman Machine" which implement the assesed algorithm
 [2]: ./XP_LRVGA_LinearRegression.py
 [3]: ./XP_LRVGA_LogisticRegression.py
 
+[X]: https://github.com/marc-h-lambert/Kalman4Classification
 [A]: https://hal.inria.fr/hal-0308662X
 [B]: https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/
 

@@ -1,5 +1,5 @@
-## The Kalman machine library
-# Python files
+# The Kalman machine library
+## Python files
 A library to assess Bayesian sequential algorithms based on the Kalman filtering framework.
 
 The arborescence is the following:

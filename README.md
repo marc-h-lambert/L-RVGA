@@ -13,6 +13,8 @@ The source of the library "Kalman Machine" which implement the assesed algorithm
 - [XP_LRVGA_LinearRegression][4]: Apply the recsurive EM to a linear regression problem (Section 7.2 of the article \[[1][A]\])
 - [XP_LRVGA_LargeScaleCovariance][5]: Apply the recsurive EM to a logistic regression problem (Section 7.3 of the article \[[1][A]\]) and assess sampling to extend results to more general problems (Section 7.4 of the article \[[1][A]\]) 
 
+For each of this files, the main variable Test is an array which contain the label of the desired test and may be modified.
+
 [1]: https://github.com/marc-h-lambert/Kalman4Classification
 [2]: ./KalmanMachine
 [3]: ./XP_LRVGA_LargeScaleCovariance.py

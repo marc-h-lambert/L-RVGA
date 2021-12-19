@@ -25,7 +25,7 @@ The source of the library "Kalman Machine" which implement the assesed algorithm
 
 \[1\]: ["The limited recursive variational Gaussian approximation (L-RVGA), Marc Lambert, Silvere Bonnabel and Francis Bach".][A] 
 
-\[2\]: ["The ecursive variational Gaussian approximation (R-VGA), Marc Lambert, Silvere Bonnabel and Francis Bach".][B] 
+\[2\]: ["The recursive variational Gaussian approximation (R-VGA), Marc Lambert, Silvere Bonnabel and Francis Bach".][B] 
 
 \[3\]: ["LIBSVM Data: Classification, Regression, and Multi-label".][C] 
 

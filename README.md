@@ -9,9 +9,9 @@ The code is available in python using the standard library. We depends on the "s
 
 ## python files
 The source of the library "Kalman Machine" which implement the assesed algorithms is available in python [here][0]. To reproduce the results of the paper we can run one of the following files:
-- [XP_LRVGA_LargeScaleCovariance][1]: Run the Recursive EM method to approximate large scale covariance matrix with factor analysis (Section 7.1 of the article). If we want to reproduce the results on libsvm datset we may download the BreastCancer, Madelon and Heart dataset from \[[2][B]\] and put the text files in the repository DataSet.
-- [XP_LRVGA_LinearRegression][2]: Apply the recsurive EM to a linear regression problem (Section 7.2 of the article)
-- [XP_LRVGA_LargeScaleCovariance][3]: Apply the recsurive EM to a logistic regression problem (Section 7.3 of the article) and assess sampling to extend results to more general problems (Section 7.4 of the article) 
+- [XP_LRVGA_LargeScaleCovariance][1]: Run the Recursive EM method to approximate large scale covariance matrix with factor analysis (Section 7.1 of the article \[[1][A]\]). If we want to reproduce the results on libsvm datset we may download the BreastCancer, Madelon and Heart dataset from \[[2][B]\] and put the text files in the repository DataSet.
+- [XP_LRVGA_LinearRegression][2]: Apply the recsurive EM to a linear regression problem (Section 7.2 of the article \[[1][A]\])
+- [XP_LRVGA_LargeScaleCovariance][3]: Apply the recsurive EM to a logistic regression problem (Section 7.3 of the article \[[1][A]\]) and assess sampling to extend results to more general problems (Section 7.4 of the article \[[1][A]\]) 
 
 [0]: ./KalmanMachine
 [1]: ./XP_LRVGA_LargeScaleCovariance.py

@@ -21,7 +21,7 @@ For each of this files, the main variable Test is an array which contain the lab
 [4]: ./XP_LRVGA_LinearRegression.py
 [5]: ./XP_LRVGA_LogisticRegression.py
 
-[A]: https://hal.inria.fr/hal-0308662X
+[A]: https://hal.inria.fr/hal-03501920
 [B]: https://hal.inria.fr/hal-03086627
 [C]: https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/
 

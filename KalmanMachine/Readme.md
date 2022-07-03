@@ -1,4 +1,4 @@
-# The Kalman machine library
+# The Kalman machine library (v2)
 ## Python files
 A library to assess Bayesian sequential algorithms based on the Kalman filtering framework.
 

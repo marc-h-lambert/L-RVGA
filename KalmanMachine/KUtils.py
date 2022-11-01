@@ -68,17 +68,14 @@ def KLDivergence(P0,P1):
     d=P0.shape[0]
     (sign, logdetP0) = LA.slogdet(P0)
     if sign <0:
-        print("logdet <0 for P0=",P0)
+        print("logdet <0 for P0 =",P0)
     (sign, logdetP1) = LA.slogdet(P1)
     if sign <0:
         print("logdet <0 for P1=",P1)
     return 0.5*(logdetP1-logdetP0+np.trace(LA.inv(P1).dot(P0))-d)
 
-def KLDivergence_largeScale(P0,logDetP0,psi,W):
+def KLDivergence_largeScale(P0,logdetP0,psi,W):
     d=P0.shape[0]
-    (sign, logdetP0) = LA.slogdet(P0)
-    if sign <0:
-        print("logdet <0 for P0=",P0)
     invP1=FAInverse(psi,W)  
     logdetP1=fastLogDet(psi,W)
     return 0.5*(logdetP1-logdetP0+np.trace(invP1.dot(P0))-d)
@@ -120,6 +117,20 @@ def importanceSamples(mu,W,psi,normalSamplesd):
     pi=pi/pi.sum(0)
     xi=mu.T+xi # add the mean
     return xi, pi
+
+# sample Gaussian variable with respect to N(mu,inv(WW+Diag(psi))) in a fast way
+# we suppose we have already N samples following N(O,Id) in the variable 
+# "normalSamplesd" of shape N x d
+# return the new samples xi and the weights pi
+def ensembleSamples(mu,W,psi,normalSamplesd, normalSamplesp):
+    d,p=W.shape
+    psi=psi.reshape(d,1)
+    xi=normalSamplesd.T/np.sqrt(psi) # x sim N(O,invPsi)
+    eps=normalSamplesp
+    M=np.identity(p)+W.T.dot(W/psi)
+    L=(W/psi).dot(LA.inv(M))
+    x=xi-L.dot(W.T.dot(xi))+L.dot(eps.T)
+    return mu+x
 
 # compute logDet(Diag(psi)+WW^T) using the matrix determinant Lemma
 def fastLogDet(psi,W):
@@ -169,12 +180,12 @@ class graphix:
     
     
 if __name__=="__main__":
-    Test=['IS']
-    if 'IS' in Test:
+    Test=['Sampling3']
+    if 'Sampling' in Test:
         # test fast sampling
-        d=5
-        p=1
-        M=10000
+        d=10000
+        p=10
+        M=10
         normalSamplesd=np.random.multivariate_normal(np.zeros(d,),np.identity(d),size=(M,))
         normalSamplesp=np.random.multivariate_normal(np.zeros(p,),np.identity(p),size=(M,))
         
@@ -183,17 +194,38 @@ if __name__=="__main__":
         W=np.random.uniform(size=[d,p])
         mu=np.random.uniform(size=[d,1])
         TrueCov=FAInverse(psi,W)
-        print("True inv(Psi+WW)=\n {0}".format(np.diag(TrueCov)))
+        print("True inv(Psi+WW)=\n {0}".format(np.trace(TrueCov)))
         
         # Sampling with full matrix
         thetaVec=np.linalg.cholesky(TrueCov).dot(normalSamplesd.T)
         Cov=empiricalCov(thetaVec.T,np.ones([M,1])/M)
-        print("Empirical Cov (full sampling)= \n {0}".format(np.diag(Cov)))
+        print("Empirical Cov (full sampling)= \n {0}".format(np.trace(Cov)))
         
-        # Fast Sampling
+        # Importance Sampling
         xi,pi=importanceSamples(np.zeros([d,1]),W,psi,normalSamplesd)
         Cov=empiricalCov(xi,pi)
-        print("Empirical Cov (fast sampling v1)= \n {0}".format(np.diag(Cov)))
+        print("Empirical Cov (importance sampling v1)= \n {0}".format(np.trace(Cov)))
+        
+        # Ensemble Sampling
+        xi=ensembleSamples(np.zeros([d,1]),W,psi,normalSamplesd,normalSamplesp)
+        C=xi[...,None]*xi[:,None]
+        Cov= np.sum(C,axis=0)/M
+        print("Empirical Cov (ensemble sampling v1)= \n {0}".format(np.trace(Cov)))
+        
+        
+    if 'Sampling2' in Test:
+        # test fast sampling
+        d=1000
+        p=10
+        M=1000
+        normalSamplesd=np.random.multivariate_normal(np.zeros(d,),np.identity(d),size=(M,))
+        normalSamplesp=np.random.multivariate_normal(np.zeros(p,),np.identity(p),size=(M,))
+        
+        np.random.seed(1)
+        psi=np.arange(1,d+1).reshape(d,1)
+        W=np.random.uniform(size=[d,p])
+        mu=np.random.uniform(size=[d,1])
+        TrueCov=FAInverse(psi,W)
         
         # Sampling with full matrix
         S=0
@@ -204,13 +236,66 @@ if __name__=="__main__":
         S=S/M
         print("estimation of S (full sampling)={0}".format(S))
         
-        # Fast Sampling 
+        # Importance Sampling 
         S=0
         thetaVec,pVec=importanceSamples(mu,W,psi,normalSamplesd)
         for i in range(0,M):
             thetai=thetaVec[i,:].reshape(d,1)
             S=S-pVec[i]*np.log(thetai.T.dot(thetai))
-        print("estimation of S (low rank sampling)={0}".format(S))
+        print("estimation of S (Importance sampling)={0}".format(S))
+        
+        # Ensemble Sampling 
+        S=0
+        thetaVec=ensembleSamples(mu,W,psi,normalSamplesd,normalSamplesp)
+        for i in range(0,M):
+            thetai=thetaVec[i,:].reshape(d,1)
+            S=S-np.log(thetai.T.dot(thetai))/M
+        print("estimation of S (Ensemble sampling)={0}".format(S))
+        
+    if 'Sampling3' in Test:
+        # test fast sampling
+        d=10000
+        p=10
+        M=10
+        np.random.seed(1)
+        normalSamplesd=np.random.multivariate_normal(np.zeros(d,),np.identity(d),size=(M,))
+        xt=np.random.uniform(0,1,size=d).reshape(d,1).T#np.random.multivariate_normal(np.random.uniform(d,),np.identity(d),size=(1,))
+        xt=5*xt/d
+        normalSamplesp=np.random.multivariate_normal(np.zeros(p,),np.identity(p),size=(M,))
+        
+        np.random.seed(1)
+        psi=np.arange(1,d+1).reshape(d,1)
+        W=np.random.uniform(size=[d,p])
+        mu=np.random.uniform(size=[d,1])
+        TrueCov=FAInverse(psi,W)
+        
+        # Analytic expression with Inverse probit 
+        beta=math.sqrt(8/math.pi)
+        nu=xt.dot(TrueCov.dot(xt.T))
+        k=beta/math.sqrt(nu+beta**2)
+        m=sigmoid(k*xt.dot(mu))[0][0]
+        c=sigp(k*xt.dot(mu))[0][0]
+        print("logistic Expectation (exact) \n m={0} c={1} \n".format(m,c))
+        
+        # Sampling with full matrix
+        thetaVec=mu+np.linalg.cholesky(TrueCov).dot(normalSamplesd.T)
+        m=(sigmoid(xt.dot(thetaVec))).sum()/M
+        c=(sigp(xt.dot(thetaVec))).sum()/M
+        print("logistic Expectation  (Full sampl.) \n m={0} c={1} \n".format(m,c))
+        
+        # Importance Sampling 
+        S=0
+        thetaVec,pVec=importanceSamples(mu,W,psi,normalSamplesd)
+        m=(sigmoid(xt.dot(thetaVec.T))*pVec).sum()/M
+        c=(sigp(xt.dot(thetaVec.T))*pVec).sum()/M
+        print("logistic Expectation (Importance sampl.) \n m={0} c={1} \n".format(m,c))
+        
+        # Ensemble Sampling 
+        S=0
+        thetaVec=ensembleSamples(mu,W,psi,normalSamplesd,normalSamplesp)
+        m=(sigmoid(xt.dot(thetaVec))).sum()/M
+        c=(sigp(xt.dot(thetaVec))).sum()/M
+        print("logistic Expectation  (Ensemble sampl.) \n m={0} c={1} \n".format(m,c))
                 
     if 'FastLogeDet' in Test:
         d=5

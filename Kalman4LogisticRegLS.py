@@ -257,9 +257,9 @@ class LargeScaleRVGALogRegSampled2(LargeScaleBayesianRegression, LogisticPredict
         self.updateCovTwoTimes=updateCovTwoTimes
     
     def updateExpectationSampling(self,xt,mu,W,psi):
-        thetaVec=ensembleSamples(mu,W,psi,self.normalSamplesd,self.normalSamplesp)
-        m=(sigmoid(thetaVec.dot(xt))).sum()
-        c=(sigp(thetaVec.dot(xt))).sum()
+        thetaVec=ensembleSamples(mu,W,psi,self.normalSamplesd,self.normalSamplesp).T
+        m=(sigmoid(thetaVec.dot(xt))).mean()
+        c=(sigp(thetaVec.dot(xt))).mean()
         return m, c
     
     def updateState(self,xt,yt,m,W,psi):

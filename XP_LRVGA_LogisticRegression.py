@@ -12,7 +12,7 @@ from KalmanMachine.KDataGenerator import LogisticRegObservations
 from KalmanMachine.Kalman4LogisticReg import RVGALogReg, EKFLogReg, \
     RVGALogRegIterated, RVGALogRegExplicit
 from KalmanMachine.Kalman4LogisticRegLS import LargeScaleEKFLogReg, LargeScaleRVGALogReg, \
-    LargeScaleRVGALogRegExplicit, LargeScaleRVGALogRegSampled
+    LargeScaleRVGALogRegExplicit, LargeScaleRVGALogRegSampled, LargeScaleRVGALogRegSampled2
 from KalmanMachine.KEvalPosterior import PosteriorLogReg
 from KalmanMachine.KVizualizationsHD import plotLSKLlogReg, plotLSerrorMaplogReg, plotCov
 from KalmanMachine.KUtils import  fastLogDet
@@ -252,7 +252,7 @@ def XP_HighDim_LogReg_Method(axs,list_methods,list_labels,sigma0,mu0,N,d,p,c,ppc
         
         elif label=="RVGA-sampled-1":
             tic=time.perf_counter()
-            lskf = LargeScaleRVGALogRegSampled(theta0, psi0, W0, passNumber=1, ppca=ppca, svd=svd, \
+            lskf = LargeScaleRVGALogRegSampled2(theta0, psi0, W0, passNumber=1, ppca=ppca, svd=svd, \
                                   nbInnerLoop=nbInnerLoop,extragrad=False,nbSamples=1).fit(X, y.reshape(N,),monitor=True)
             toc=time.perf_counter()
             col='k'
@@ -264,7 +264,7 @@ def XP_HighDim_LogReg_Method(axs,list_methods,list_labels,sigma0,mu0,N,d,p,c,ppc
             
         elif label=="RVGA-sampled-10":
             tic=time.perf_counter()
-            lskf = LargeScaleRVGALogRegSampled(theta0, psi0, W0, passNumber=1, ppca=ppca, svd=svd, \
+            lskf = LargeScaleRVGALogRegSampled2(theta0, psi0, W0, passNumber=1, ppca=ppca, svd=svd, \
                                   nbInnerLoop=nbInnerLoop,extragrad=False,nbSamples=10).fit(X, y.reshape(N,),monitor=True)
             toc=time.perf_counter()
             col='k'
@@ -276,7 +276,7 @@ def XP_HighDim_LogReg_Method(axs,list_methods,list_labels,sigma0,mu0,N,d,p,c,ppc
             
         elif label=="RVGA-sampled-100":
             tic=time.perf_counter()
-            lskf = LargeScaleRVGALogRegSampled(theta0, psi0, W0, passNumber=1, ppca=ppca, svd=svd, \
+            lskf = LargeScaleRVGALogRegSampled2(theta0, psi0, W0, passNumber=1, ppca=ppca, svd=svd, \
                                   nbInnerLoop=nbInnerLoop,extragrad=False,nbSamples=100).fit(X, y.reshape(N,),monitor=True)
             toc=time.perf_counter()
             col='k'
@@ -288,7 +288,7 @@ def XP_HighDim_LogReg_Method(axs,list_methods,list_labels,sigma0,mu0,N,d,p,c,ppc
         
         elif label=="RVGA-sampled-extragrad-1":
             tic=time.perf_counter()
-            lskf = LargeScaleRVGALogRegSampled(theta0, psi0, W0, passNumber=1, ppca=ppca, svd=svd, \
+            lskf = LargeScaleRVGALogRegSampled2(theta0, psi0, W0, passNumber=1, ppca=ppca, svd=svd, \
                                   nbInnerLoop=nbInnerLoop,extragrad=True,nbSamples=1).fit(X, y.reshape(N,),monitor=True)
             toc=time.perf_counter()
             col='g'
@@ -298,10 +298,10 @@ def XP_HighDim_LogReg_Method(axs,list_methods,list_labels,sigma0,mu0,N,d,p,c,ppc
             print("Time per iteration for LSKF ({0}) is {1} s;".format(label,lskf.timePerIteration))
             print("The KL divergence for LSKF ({0}) is {1}".format(label,posterior.divergence(lskf.theta,lskf.Cov,normalSamples)))
             
-        elif label=="RVGA-sampled-extragrad-10":
+        elif label=="RVGA-sampled-extragrad-3":
             tic=time.perf_counter()
-            lskf = LargeScaleRVGALogRegSampled(theta0, psi0, W0, passNumber=1, ppca=ppca, svd=svd, \
-                                  nbInnerLoop=nbInnerLoop,extragrad=True,nbSamples=10).fit(X, y.reshape(N,),monitor=True)
+            lskf = LargeScaleRVGALogRegSampled2(theta0, psi0, W0, passNumber=1, ppca=ppca, svd=svd, \
+                                  nbInnerLoop=nbInnerLoop,extragrad=True,nbSamples=3).fit(X, y.reshape(N,),monitor=True)
             toc=time.perf_counter()
             col='g'
 
@@ -310,9 +310,21 @@ def XP_HighDim_LogReg_Method(axs,list_methods,list_labels,sigma0,mu0,N,d,p,c,ppc
             print("Time per iteration for LSKF ({0}) is {1} s;".format(label,lskf.timePerIteration))
             print("The KL divergence for LSKF ({0}) is {1}".format(label,posterior.divergence(lskf.theta,lskf.Cov,normalSamples)))
         
+        elif label=="RVGA-sampled-extragrad-10":
+            tic=time.perf_counter()
+            lskf = LargeScaleRVGALogRegSampled2(theta0, psi0, W0, passNumber=1, ppca=ppca, svd=svd, \
+                                  nbInnerLoop=nbInnerLoop,extragrad=True,nbSamples=10).fit(X, y.reshape(N,),monitor=True)
+            toc=time.perf_counter()
+            col='g'
+
+            print("Run LSKF ({0}) with {1}-{2} in={3:.2}s".format(label,typeFA,methodFA,toc-tic))
+            print("Memory cost for LSKF ({0})  is {1} MB;".format(label,lskf.memoryUsed))
+            print("Time per iteration for LSKF ({0}) is {1} s;".format(label,lskf.timePerIteration))
+            print("The KL divergence for LSKF ({0}) is {1}".format(label,posterior.divergence(lskf.theta,lskf.Cov,normalSamples)))
+            
         elif label=="RVGA-sampled-extragrad-100":
             tic=time.perf_counter()
-            lskf = LargeScaleRVGALogRegSampled(theta0, psi0, W0, passNumber=1, ppca=ppca, svd=svd, \
+            lskf = LargeScaleRVGALogRegSampled2(theta0, psi0, W0, passNumber=1, ppca=ppca, svd=svd, \
                                   nbInnerLoop=nbInnerLoop,extragrad=True,nbSamples=100).fit(X, y.reshape(N,),monitor=True)
             toc=time.perf_counter()
             col='g'
@@ -324,7 +336,7 @@ def XP_HighDim_LogReg_Method(axs,list_methods,list_labels,sigma0,mu0,N,d,p,c,ppc
             
         elif label=="RVGA-sampled-extragrad2-100":
             tic=time.perf_counter()
-            lskf = LargeScaleRVGALogRegSampled(theta0, psi0, W0, passNumber=1, ppca=ppca, svd=svd, \
+            lskf = LargeScaleRVGALogRegSampled2(theta0, psi0, W0, passNumber=1, ppca=ppca, svd=svd, \
                                   nbInnerLoop=nbInnerLoop,extragrad=True,updateCovTwoTimes=True,nbSamples=100).fit(X, y.reshape(N,),monitor=True)
             toc=time.perf_counter()
             col='r'
@@ -372,7 +384,7 @@ def XP_HighDim_LogReg_DataSET(axs,list_methods,list_labels,sigma0_list,mu0,N,d_l
         XP_HighDim_LogReg_Method(np.array([ax]),list_methods,list_labels,sigma0_list[i],mu0,N,d_list[i],p_list[i],c,\
                              ppca,svd,nbInnerLoop_list[i],seed,labelize=labelize,coef_s=coef_s,\
                                  computeLaplace=True,nbSamplesKL=nbSamplesKL,loss=np.array([loss]),list_col0=list_col0)
-        ax.set_title(r'$\sigma$={0}'.format(sigma0_list[i]))
+        ax.set_title(r'$\sigma_0$={0}'.format(sigma0_list[i]))
         ax.set_xlabel('nb iterations')
         if loss=="kl":
             ax.set_ylabel('KL')
@@ -410,15 +422,19 @@ def XP_2D(axs,sigma0,mu0,N,s,c,seed,nbLevels=1):
     plotCov(axs,list_lkf,list_labels,posterior,nbLevels)
     
 if __name__=="__main__":
-    Test=["LogHD1"] # change the label to change the Section tested
+    Test=["LogHD"] # change the label to change the Section tested
+    
     num=1    
     
-    # APPLICATION LOGISTIC REGRESSION
+    ########################################################################################"
+    #  EXPERIMENTS FOR LOGISTIC REGRESSION (Section 5.3)
+    ########################################################################################
+    
     # We have reduced the dimension to speed up, to find exactely paper result 
     # put d=1000, N=10000 and coef_s=0.26
-    if 'LogHD1' in Test:
+    if 'LogHD' in Test:
         # The recursive EM converge to the batch Laplace for p higher enough
-        print("######### LogHD1 : Sensitivity to lattent dimension p ##############")
+        print("######### LogHD : Sensitivity to lattent dimension p ##############")
         N=1000
         d=200
         nbInnerLoop=1
@@ -458,10 +474,56 @@ if __name__=="__main__":
         plt.savefig('./outputs/LRVGA_LogReg_p_{0}_{1}'.format(N,d))
         num=num+1
     
-    # Results of Section 7.4.1: 
+    ########################################################################################"
+    #  EXPERIMENTS FOR GENERAL CASE (Section 5.4)
+    ########################################################################################
+    # Results of Section 5.4: 
+    # 10 samples are suffiscent for mirror prox to converge 
+    if 'Sampling' in Test:
+        print("######### Sampling : Mirror prox with 1, 10 an 100 samples ##############")
+        sigma0_list=[1,2,3]
+        mu0=0
+        d=1000
+        p=10
+        N=1000
+        d_list=[d,d,d]
+        p_list=[p,p,p]
+        nbInnerLoop_list=[1,1,1]
+        c=1
+        seed=1
+        ppca=False
+        svd=False
+        nbSamplesKL=4
+        list_methods=["RVGA-extragrad","RVGA-sampled-extragrad-1","RVGA-sampled-extragrad-10","RVGA-sampled-extragrad-100"]
+        list_labels=["baseline","1-sample","10-samples","100-samples"]
+        list_cols=np.array(['k','r','b','g'])
+        coef_s=0.15
+        
+        s=1/d**(coef_s)
+        RegObs=LogisticRegObservations(s,N,d,c,seed,scale=1,rotate=True,normalize=True)
+        y,X=RegObs.datas
+        fig, ax = plt.subplots(1, 1, sharex=False,figsize=set_size(ratio=1),num=num)
+        RegObs.plotOutputs(ax)
+        ax.set_title(r'statistics of outputs for the true lattent parameter $y_i=sigma(x_i^Ttheta)$')
+        plt.savefig('./outputs/LRVGA_LogReg_vsp_Inputs_{0}_{1}'.format(N,d))
+        num=num+1
+        
+        
+        #fig, axs = plt.subplots(1, 3, sharex=False,figsize=set_size(ratio=0.75),num=num)
+        fig, axs = plt.subplots(1, 3, sharex=False,figsize=(8, 4),num=num)
+        
+        XP_HighDim_LogReg_DataSET(axs,list_methods,list_labels,sigma0_list,mu0,N,d_list,p_list,c,ppca,svd,\
+                              nbInnerLoop_list,seed,coef_s,computeLaplace=False,nbSamplesKL=nbSamplesKL,loss="kl",list_col0=list_cols)  
+        fig.legend(loc='upper right',ncol=2,fontsize="small")
+        fig.suptitle(r' Logistic Regression' +'\n' + ' sensitivity to number of samples'+'\n'+ '$d={0}$, $N={1}$, $p={2}$, $c={3}$'.format(d,N,p,c)) 
+        fig.tight_layout()
+        plt.savefig('./outputs/Sampling2_KL')
+        num=num+1
+        
+    # Results of Appendix E 
     # Mirror prox (extragrad) is less biased than implicit or explicit scheme
-    if 'MirrorProx1' in Test:
-        print("######### Test2D : Test of extragrad on a 2D example ##############")
+    if 'MirrorProx' in Test:
+        print("######### MirrorProx : Test of extragrad on a 2D example ##############")
         N=10
         d=2
         mu0=0
@@ -484,10 +546,11 @@ if __name__=="__main__":
         plt.savefig('./outputs/MirrorProx1_cov2D')
         num=num+1
     
-    # Results of Section 7.4.2: 
-    # Both mirror prox (extragrad) and sampling are necessary to converge
-    if 'Sampling1' in Test:
-        print("######### Sampling1 : Test of sampling with/without extragrad ##############")
+    ########################################################################################"
+    # EXTRA EXPERIMENTS (NOT IN THE PAPER)
+    ########################################################################################
+    if 'SamplingVsExtragrad' in Test:
+        print("######### SamplingVsExtragrad : Test of sampling with/without extragrad ##############")
         N=1000
         d=100
         p=10
@@ -524,53 +587,10 @@ if __name__=="__main__":
         plt.tight_layout()
         plt.savefig('./outputs/Sampling1_KL')
         num=num+1
-    
-    # Results of Section 7.4.3: 
-    # 10 samples are suffiscent for mirror prox to converge 
-    if 'Sampling2' in Test:
-        print("######### Sampling2 : Mirror prox with 1, 10 an 100 samples ##############")
-        sigma0_list=[1,3,10]
-        mu0=0
-        d=100
-        p=10
-        N=1000
-        d_list=[d,d,d]
-        p_list=[p,p,p]
-        nbInnerLoop_list=[1,1,1]
-        c=1
-        seed=1
-        ppca=False
-        svd=False
-        nbSamplesKL=4
-        list_methods=["RVGA-extragrad","RVGA-sampled-extragrad-1","RVGA-sampled-extragrad-10","RVGA-sampled-extragrad-100"]
-        list_labels=["analytical-average","1-sample","10-samples","100-samples"]
-        list_cols=np.array(['k','r','b','g'])
-        coef_s=0.15
         
-        s=1/d**(coef_s)
-        RegObs=LogisticRegObservations(s,N,d,c,seed,scale=1,rotate=True,normalize=True)
-        y,X=RegObs.datas
-        fig, ax = plt.subplots(1, 1, sharex=False,figsize=set_size(ratio=1),num=num)
-        RegObs.plotOutputs(ax)
-        ax.set_title(r'statistics of outputs for the true lattent parameter $y_i=sigma(x_i^Ttheta)$')
-        plt.savefig('./outputs/LRVGA_LogReg_vsp_Inputs_{0}_{1}'.format(N,d))
-        num=num+1
-        
-        
-        fig, axs = plt.subplots(1, 3, sharex=False,figsize=set_size(ratio=0.75),num=num)
-        
-        XP_HighDim_LogReg_DataSET(axs,list_methods,list_labels,sigma0_list,mu0,N,d_list,p_list,c,ppca,svd,\
-                              nbInnerLoop_list,seed,coef_s,computeLaplace=False,nbSamplesKL=nbSamplesKL,loss="kl",list_col0=list_cols)  
-        fig.suptitle(r' Logistic Regression' +'\n' + ' sensitivity to number of samples'+'\n'+ '$d={0}$, $N={1}$, $p={2}$, $c={3}$'.format(d,N,p,c)) 
-        fig.legend(loc='upper right',ncol=1)
-        fig.tight_layout()
-        plt.savefig('./outputs/Sampling2_KL')
-        num=num+1
-    
-    # Results of Appendix F.3 (without factor analysis): 
     # the mirror prox is better than the implicit and explicit scheme 
-    if 'MirrorProx2' in Test:
-        print("######### MirrorProx2 : Test of mirror prox without factor analysis ##############")
+    if 'MirrorProxHighDim' in Test:
+        print("######### MirrorProxHighDim : Test of mirror prox without factor analysis ##############")
         sigma0_list=[1,3,10]
         mu0=0
         d=100
@@ -619,10 +639,9 @@ if __name__=="__main__":
         plt.savefig('./outputs/MirrorProx2_MAP')
         num=num+1
     
-    # Results of Appendix F.3 (with factor analysis): 
     # the partial mirror prox is better than the full mirror prox when we use factor analysis
-    if 'MirrorProx3' in Test:
-        print("######### MirrorProx3 : Test of mirror prox with factor analysis ##############")
+    if 'MirrorProxHighDimFA' in Test:
+        print("######### MirrorProxHighDimFA : Test of mirror prox with factor analysis ##############")
         sigma0_list=[1,3,10]
         mu0=0
         d=100

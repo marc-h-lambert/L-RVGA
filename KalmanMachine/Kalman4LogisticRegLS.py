@@ -15,7 +15,7 @@
 #     Marc Lambert, Silvere Bonnabel and Francis Bach 2020"                        #                                                                                                                  
 ####################################################################################
 
-from .KUtils import sigmoid, sigp, FAInverse, importanceSamples
+from .KUtils import sigmoid, sigp, FAInverse, importanceSamples, ensembleSamples
 import numpy as np
 import numpy.random
 import numpy.linalg as LA
@@ -194,6 +194,72 @@ class LargeScaleRVGALogRegSampled(LargeScaleBayesianRegression, LogisticPredicto
         thetaVec,pVec=importanceSamples(mu,W,psi,self.normalSamples)
         m=(sigmoid(thetaVec.dot(xt))*pVec).sum()
         c=(sigp(thetaVec.dot(xt))*pVec).sum()
+        return m, c
+    
+    def updateState(self,xt,yt,m,W,psi):
+        # Update the state
+        error=yt-m
+        if psi.all()==0 or psi.any()==0:
+            Cov=FAInverse(psi,W)
+            theta=self._theta+Cov.dot(xt)*error
+        else:
+            # use the new updates
+            p=W.shape[1]
+            invM=LA.inv(np.identity(p)+W.T.dot(W/psi))
+            U=W.T.dot(xt/psi)
+            theta=self._theta+error*(xt-W.dot(invM).dot(U))/psi 
+        return theta
+    
+    def updateCov(self,xt,c):
+        c=max(c,1e-100)
+        sigma=np.sqrt(1/c)
+        psi,W=self._covAnalyze.fit(xt,sigma,update=False) 
+        return psi,W
+    
+    def update(self,xt,yt):
+        
+        psi=self.psi
+        W=self.B
+        theta=self._theta
+        if psi.all()==0 or psi.any()==0:
+            Cov=self.Cov
+            
+        # generate samples to compute the expectation
+        d=theta.shape[0]
+        
+        m,c = self.updateExpectationSampling(xt,theta,W,psi)
+        
+        
+        psi,W=self.updateCov(xt,c)
+        theta=self.updateState(xt,yt,m,W,psi) 
+        
+        m,c = self.updateExpectationSampling(xt,theta,W,psi)
+        if self.extragrad and not self.updateCovTwoTimes:
+            theta=self.updateState(xt,yt,m,W,psi) 
+        if self.extragrad and self.updateCovTwoTimes:
+            psi,W=self.updateCov(xt,c)
+            theta=self.updateState(xt,yt,m,W,psi) 
+                
+        self._covAnalyze._psio=psi
+        self._covAnalyze._Wo=W
+        self._theta=theta
+        
+# Same as previously but with ensembleSamples instead of importanceSamples
+class LargeScaleRVGALogRegSampled2(LargeScaleBayesianRegression, LogisticPredictor):
+    
+    def __init__(self, theta0, psi0, B0, passNumber=1, ppca=False, svd=False,nbInnerLoop=50,nbSamples=10,seed=1,extragrad=True,updateCovTwoTimes=False):
+        super().__init__(theta0, psi0, B0, passNumber=passNumber, sigma=1, ppca=ppca, svd=svd,nbInnerLoop=nbInnerLoop)
+        np.random.seed(seed)
+        d,p=B0.shape
+        self.normalSamplesd=np.random.multivariate_normal(np.zeros(d,),np.identity(d),size=(nbSamples,))
+        self.normalSamplesp=np.random.multivariate_normal(np.zeros(p,),np.identity(p),size=(nbSamples,))
+        self.extragrad=extragrad
+        self.updateCovTwoTimes=updateCovTwoTimes
+    
+    def updateExpectationSampling(self,xt,mu,W,psi):
+        thetaVec=ensembleSamples(mu,W,psi,self.normalSamplesd,self.normalSamplesp).T
+        m=(sigmoid(thetaVec.dot(xt))).mean()
+        c=(sigp(thetaVec.dot(xt))).mean()
         return m, c
     
     def updateState(self,xt,yt,m,W,psi):

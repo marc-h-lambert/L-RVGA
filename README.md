@@ -21,8 +21,8 @@ For each of this files, the main variable Test is an array which contain the lab
 [4]: ./XP_LRVGA_LinearRegression.py
 [5]: ./XP_LRVGA_LogisticRegression.py
 
-[A]: https://hal.inria.fr/hal-03501920
-[B]: https://hal.inria.fr/hal-03086627
+[A]: https://hal.inria.fr/hal-03501920v2/document
+[B]: https://hal.inria.fr/hal-03086627v2/document
 [C]: https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/
 
 \[1\]: ["The limited recursive variational Gaussian approximation (L-RVGA), Marc Lambert, Silvere Bonnabel and Francis Bach".][A] 
